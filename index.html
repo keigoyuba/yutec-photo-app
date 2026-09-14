@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>ユテック工事写真</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a2332">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ 撮影画面 ============ -->
+<div id="screen-camera" class="screen active">
+  <div class="camera-wrap">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="captureCanvas" style="display:none;"></canvas>
+
+    <!-- 黒板オーバーレイ（ドラッグ&リサイズ可能） -->
+    <div id="blackboard" class="blackboard">
+      <div class="bb-resize-handle" id="bbResizeHandle"></div>
+      <div class="bb-content" id="bbContent">
+        <table class="bb-table">
+          <tr><td class="bb-label">工事件名</td><td id="bbKoji">－</td></tr>
+          <tr><td class="bb-label">工種</td><td id="bbKoshu">－</td></tr>
+          <tr><td class="bb-label">測点</td><td id="bbSokuten">－</td></tr>
+          <tr><td class="bb-label">撮影日</td><td id="bbDate">－</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 上部バー -->
+    <div class="top-bar">
+      <button id="btnMenu" class="icon-btn">☰</button>
+      <div class="top-bar-title" id="currentKojiName">工事未選択</div>
+      <div class="sync-badge" id="syncBadge">同期待ち: 0</div>
+    </div>
+
+    <!-- 黒板ON/OFFトグル -->
+    <div class="bb-toggle-wrap">
+      <label class="bb-toggle">
+        <input type="checkbox" id="bbToggle" checked>
+        <span>黒板</span>
+      </label>
+    </div>
+
+    <!-- 下部バー -->
+    <div class="bottom-bar">
+      <button id="btnChecklist" class="round-btn small">📋<span id="checklistBadge" class="badge" style="display:none;">0</span></button>
+      <button id="btnCapture" class="shutter-btn" aria-label="撮影"></button>
+      <button id="btnBlackboardSelect" class="round-btn small">🗒️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 黒板選択画面 ============ -->
+<div id="screen-bbselect" class="screen">
+  <div class="header-bar">
+    <button class="back-btn" data-back="camera">← 戻る</button>
+    <div class="header-title">黒板を選択</div>
+  </div>
+  <div id="bbList" class="list-area"></div>
+</div>
+
+<!-- ============ 撮影チェックリスト画面 ============ -->
+<div id="screen-checklist" class="screen">
+  <div class="header-bar">
+    <button class="back-btn" data-back="camera">← 戻る</button>
+    <div class="header-title">撮影チェックリスト</div>
+  </div>
+  <div id="checklistArea" class="list-area"></div>
+</div>
+
+<!-- ============ メニュー画面 ============ -->
+<div id="screen-menu" class="screen">
+  <div class="header-bar">
+    <button class="back-btn" data-back="camera">← 戻る</button>
+    <div class="header-title">メニュー</div>
+  </div>
+  <div class="list-area">
+    <button class="menu-item" id="menuKojiSelect">工事を選択</button>
+    <button class="menu-item" id="menuSheetImport">撮影リストを読み込む（Sheets）</button>
+    <button class="menu-item" id="menuGallery">撮影済み写真一覧</button>
+    <button class="menu-item" id="menuSettings">設定（同期方式・解像度）</button>
+  </div>
+</div>
+
+<!-- ============ 設定画面 ============ -->
+<div id="screen-settings" class="screen">
+  <div class="header-bar">
+    <button class="back-btn" data-back="menu">← 戻る</button>
+    <div class="header-title">設定</div>
+  </div>
+  <div class="list-area">
+    <div class="settings-group">
+      <div class="settings-label">同期のタイミング</div>
+      <label class="radio-row"><input type="radio" name="syncMode" value="wifi" checked> Wi-Fi接続時のみ同期（推奨・通信量を抑える）</label>
+      <label class="radio-row"><input type="radio" name="syncMode" value="always"> 通常回線でも同期する（4G/5G含む）</label>
+    </div>
+    <div class="settings-group">
+      <div class="settings-label">出力解像度・容量の目安</div>
+      <div class="settings-note">1280×960（約123万画素）／1枚あたり約350〜400KB<br>東海鋼管提出用・社内Drive保存用は同一データです。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 撮影済みギャラリー画面 ============ -->
+<div id="screen-gallery" class="screen">
+  <div class="header-bar">
+    <button class="back-btn" data-back="menu">← 戻る</button>
+    <div class="header-title">撮影済み写真</div>
+  </div>
+  <div id="galleryGrid" class="gallery-grid"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/db.js"></script>
+<script src="js/blackboard.js"></script>
+<script src="js/camera.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

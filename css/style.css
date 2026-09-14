@@ -1,0 +1,84 @@
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
+html, body { height: 100%; overflow: hidden; background: #0b0e14; font-family: "Hiragino Sans", "Yu Gothic", sans-serif; }
+
+.screen { display: none; position: fixed; inset: 0; background: #0b0e14; color: #fff; }
+.screen.active { display: block; }
+
+/* ---------- カメラ画面 ---------- */
+.camera-wrap { position: relative; width: 100%; height: 100%; background: #000; }
+#video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+.top-bar {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; gap: 10px;
+  padding: max(10px, env(safe-area-inset-top)) 12px 10px;
+  background: linear-gradient(rgba(0,0,0,.65), transparent);
+  z-index: 20;
+}
+.top-bar-title { flex: 1; font-size: 14px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,.8); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sync-badge { font-size: 11px; background: rgba(255,255,255,.15); padding: 4px 8px; border-radius: 10px; }
+.icon-btn { background: rgba(0,0,0,.4); border: none; color: #fff; font-size: 20px; width: 38px; height: 38px; border-radius: 19px; }
+
+.bb-toggle-wrap { position: absolute; top: 56px; right: 12px; z-index: 20; }
+.bb-toggle { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px; background: rgba(0,0,0,.45); padding: 6px 8px; border-radius: 10px; }
+.bb-toggle input { width: 30px; height: 18px; }
+
+.bottom-bar {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 16px 24px max(16px, env(safe-area-inset-bottom));
+  background: linear-gradient(transparent, rgba(0,0,0,.7));
+  z-index: 20;
+}
+.shutter-btn { width: 72px; height: 72px; border-radius: 50%; background: #fff; border: 4px solid rgba(255,255,255,.4); }
+.shutter-btn:active { background: #ddd; }
+.round-btn { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,.15); border: none; font-size: 20px; position: relative; }
+.round-btn.small { width: 44px; height: 44px; }
+.badge { position: absolute; top: -4px; right: -4px; background: #e64545; color: #fff; font-size: 10px; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 3px; }
+
+/* ---------- 黒板オーバーレイ ---------- */
+.blackboard {
+  position: absolute; left: 8%; top: 55%; width: 42%; height: 20%;
+  min-width: 120px; min-height: 70px;
+  background: #16321f; border: 3px solid #f2e9d8; box-shadow: 0 2px 10px rgba(0,0,0,.5);
+  z-index: 15; touch-action: none;
+}
+.blackboard.hidden { display: none; }
+.bb-content { width: 100%; height: 100%; padding: 3%; overflow: hidden; }
+.bb-table { width: 100%; height: 100%; border-collapse: collapse; color: #fdf8ec; font-size: clamp(8px, 2.6vw, 15px); }
+.bb-table td { border: 1px solid rgba(253,248,236,.5); padding: 2px 5px; }
+.bb-label { color: #ffe98a; white-space: nowrap; width: 30%; }
+.bb-resize-handle {
+  position: absolute; right: -14px; bottom: -14px; width: 28px; height: 28px;
+  background: #ffe98a; border: 2px solid #16321f; border-radius: 50%;
+  z-index: 16; touch-action: none;
+}
+
+/* ---------- 共通：ヘッダー・リスト ---------- */
+.header-bar { display: flex; align-items: center; gap: 10px; padding: max(14px, env(safe-area-inset-top)) 14px 14px; background: #16202e; }
+.back-btn { background: none; border: none; color: #8fb8ff; font-size: 15px; }
+.header-title { font-size: 16px; font-weight: 700; }
+.list-area { padding: 12px; overflow-y: auto; height: calc(100% - 60px); }
+
+.menu-item, .list-item {
+  display: block; width: 100%; text-align: left; background: #16202e; color: #fff;
+  border: none; border-radius: 10px; padding: 16px; margin-bottom: 10px; font-size: 15px;
+}
+.list-item { display: flex; align-items: center; justify-content: space-between; }
+.list-item .check { color: #6ee08a; font-size: 18px; }
+.list-item .uncheck { color: #ffb45c; font-size: 13px; }
+
+.settings-group { background: #16202e; border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+.settings-label { font-weight: 700; margin-bottom: 8px; font-size: 14px; }
+.radio-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; font-size: 13px; }
+.settings-note { font-size: 12px; color: #aab4c4; line-height: 1.6; }
+
+.gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; overflow-y: auto; height: calc(100% - 60px); }
+.gallery-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; }
+
+.toast {
+  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: rgba(20,20,20,.92); color: #fff; padding: 10px 18px; border-radius: 20px;
+  font-size: 13px; opacity: 0; pointer-events: none; transition: all .25s; z-index: 100;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
