@@ -25,21 +25,20 @@ const CameraModule = (() => {
   }
 
   // 表示上の座標（黒板のleft/top/width/height, wrap基準px）を
-  // 実際のカメラ映像（ソース解像度）の座標に変換する
-  // object-fit:contain のため、映像は中央に収まりレターボックス（黒帯）が出る前提で計算する
+  // 実際のカメラ映像（ソース解像度）の座標に変換する（object-fit:coverのズレを補正）
   function mapOverlayToSource(overlayRect, wrapRect) {
     const videoW = video.videoWidth;
     const videoH = video.videoHeight;
     const wrapW = wrapRect.width;
     const wrapH = wrapRect.height;
 
-    const scale = Math.min(wrapW / videoW, wrapH / videoH);
-    const offsetX = (wrapW - videoW * scale) / 2;
-    const offsetY = (wrapH - videoH * scale) / 2;
+    const scale = Math.max(wrapW / videoW, wrapH / videoH);
+    const offsetX = (videoW * scale - wrapW) / 2;
+    const offsetY = (videoH * scale - wrapH) / 2;
 
     return {
-      left: (overlayRect.left - offsetX) / scale,
-      top: (overlayRect.top - offsetY) / scale,
+      left: (overlayRect.left + offsetX) / scale,
+      top: (overlayRect.top + offsetY) / scale,
       width: overlayRect.width / scale,
       height: overlayRect.height / scale
     };
@@ -122,14 +121,7 @@ const CameraModule = (() => {
         left: bbEl.offsetLeft, top: bbEl.offsetTop,
         width: bbEl.offsetWidth, height: bbEl.offsetHeight
       };
-      const srcRectRaw = mapOverlayToSource(bbRect, wrapRect);
-      // 黒帯（レターボックス）部分にはみ出していた場合は映像の範囲内に収める
-      const srcRect = {
-        left: Math.max(0, Math.min(srcRectRaw.left, videoW)),
-        top: Math.max(0, Math.min(srcRectRaw.top, videoH))
-      };
-      srcRect.width = Math.max(0, Math.min(srcRectRaw.width, videoW - srcRect.left));
-      srcRect.height = Math.max(0, Math.min(srcRectRaw.height, videoH - srcRect.top));
+      const srcRect = mapOverlayToSource(bbRect, wrapRect);
       const scaleToTarget = target.w / videoW;
       const canvasRect = {
         left: srcRect.left * scaleToTarget,

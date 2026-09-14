@@ -170,46 +170,12 @@ function initUI() {
   applyBlackboardContent();
 }
 
-function isStandalone() {
-  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-}
-
-async function setupOrientation() {
-  const hint = document.getElementById('rotateHint');
-  const msg = document.getElementById('rotateHintMsg');
-
-  if (!isStandalone()) {
-    msg.innerHTML = 'このアプリはホーム画面に追加してから起動すると、全画面・横向き固定で使えます。<br>まだの方は、ブラウザのメニューから「ホーム画面に追加」してください。';
-    // ブラウザタブ表示の場合は常時ヒントは出さず、初回トーストのみで案内
-    Toast.show('ホーム画面に追加すると全画面表示になります');
-  }
-
-  // Android・standalone環境では横向き固定を試みる（iOS Safariは非対応のためtry-catchで無視）
-  try {
-    if (screen.orientation && screen.orientation.lock) {
-      await screen.orientation.lock('landscape');
-    }
-  } catch (e) {
-    // iOSや非対応環境では失敗するのが正常。CSSのorientationイベントで補助する
-  }
-
-  function checkOrientation() {
-    const isPortrait = window.innerHeight > window.innerWidth;
-    // 横向き固定が効いていない環境（主にiPhone）向けに、縦のままなら回転を促す
-    hint.classList.toggle('show', isPortrait);
-  }
-  window.addEventListener('resize', checkOrientation);
-  window.addEventListener('orientationchange', checkOrientation);
-  checkOrientation();
-}
-
 async function main() {
   Blackboard.init();
   await CameraModule.init();
   initUI();
   await updateChecklistBadge();
   await refreshSyncBadge();
-  await setupOrientation();
 
   const syncMode = await YutecDB.getSetting('syncMode', 'wifi');
   document.querySelector(`input[name="syncMode"][value="${syncMode}"]`).checked = true;
