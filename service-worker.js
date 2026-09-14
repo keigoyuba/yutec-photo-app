@@ -1,5 +1,5 @@
 /* オフラインでもアプリが起動できるよう、アプリ本体のファイルをキャッシュする */
-const CACHE_NAME = 'yutec-photo-app-v1';
+const CACHE_NAME = 'yutec-photo-app-v2';
 const APP_SHELL = [
   './',
   './index.html',
